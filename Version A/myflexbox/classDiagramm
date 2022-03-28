@@ -1,0 +1,1136 @@
+@startuml
+set namespaceSeparator ::
+
+class "myflexbox::repos::user_repo.dart::UserRepository" {
+  +FirebaseDatabase* database
+  +DatabaseReference* userDb
+  +Future<bool*>* addUserToDB()
+  +Future<bool*>* addFavouritesToUser()
+  +Future<void>* addFavouriteToFirebase()
+  +Future<void>* getFavouriteUsers()
+  +Future<DBUser*>* getUserFromDB()
+  +Future<List<DBUser*>*>* getContactsWithoutFavorites()
+}
+
+"myflexbox::repos::user_repo.dart::UserRepository" o-- "firebase_database::firebase_database.dart::FirebaseDatabase"
+"myflexbox::repos::user_repo.dart::UserRepository" o-- "firebase_database::firebase_database.dart::DatabaseReference"
+
+class "myflexbox::repos::current_lockers_repo.dart::CurrentLockersRepository" {
+  +Future<String*>* getLockers()
+}
+
+class "myflexbox::repos::models::form_data.dart::ErrorType" {
+  +int* index
+  {static} +List<ErrorType*>* values
+  {static} +ErrorType* PasswordError
+  {static} +ErrorType* EmailError
+  {static} +ErrorType* UsernameError
+}
+
+"myflexbox::repos::models::form_data.dart::ErrorType" o-- "myflexbox::repos::models::form_data.dart::ErrorType"
+
+class "myflexbox::repos::models::form_data.dart::Email" {
+  +String* text
+  +String* error
+  +void validate()
+}
+
+class "myflexbox::repos::models::form_data.dart::Password" {
+  +String* text
+  +String* error
+  +void validate()
+}
+
+class "myflexbox::repos::models::form_data.dart::Username" {
+  +String* text
+  +String* error
+  +void validate()
+}
+
+class "myflexbox::repos::models::form_data.dart::Telephone" {
+  +String* number
+  +String* error
+  +void validate()
+}
+
+class "myflexbox::repos::models::user.dart::DBUser" {
+  +String* email
+  +String* name
+  +String* number
+  +String* uid
+  +List<String*>* favourites
+  +Map<String*, dynamic>* toJson()
+}
+
+class "myflexbox::repos::models::google_places_data.dart::Suggestion" {
+  +String* placeId
+  +String* description
+  +String* toString()
+}
+
+class "myflexbox::repos::models::google_places_data.dart::MapsLocationData" {
+  +double* lat
+  +double* long
+  +String* description
+  +bool* isExactLocation
+}
+
+class "myflexbox::repos::models::notification.dart::Messages" {
+  +String* friendUid
+  +String* text
+  +String* messageType
+  +Map<String*, dynamic>* toJson()
+}
+
+class "myflexbox::repos::models::compartment.dart::Compartment" {
+  +int* compartmentId
+  +String* number
+  +String* size
+  +double* length
+  +double* height
+  +double* depth
+  +String* type
+}
+
+class "myflexbox::repos::models::booking.dart::Booking" {
+  +int* status
+  +int* bookingId
+  +String* parcelNumber
+  +String* externalId
+  +int* lockerId
+  +int* compartmentId
+  +double* compartmentLength
+  +double* compartmentHeight
+  +double* compartmentDepth
+  +String* deliveryCode
+  +String* collectingCode
+  +String* state
+  +String* startTimeSystem
+  +String* startTime
+  +String* endTime
+  +String* endTimeSystem
+  +String* message
+}
+
+class "myflexbox::repos::models::booking.dart::BookingTo" {
+  +DBUser* toUser
+}
+
+"myflexbox::repos::models::booking.dart::BookingTo" o-- "myflexbox::repos::models::user.dart::DBUser"
+
+class "myflexbox::repos::models::booking.dart::BookingFrom" {
+  +DBUser* fromUser
+}
+
+"myflexbox::repos::models::booking.dart::BookingFrom" o-- "myflexbox::repos::models::user.dart::DBUser"
+
+class "myflexbox::repos::models::locker.dart::Locker" {
+  +int* lockerId
+  +String* externalId
+  +String* name
+  +String* streetName
+  +String* streetNumber
+  +String* postcode
+  +String* city
+  +String* country
+  +String* countryCode
+  +double* longitude
+  +double* latitude
+  +String* state
+  +String* access
+  +String* manufacturer
+  +List<Compartment*>* compartments
+}
+
+class "myflexbox::repos::models::booking_request.dart::BookingRequest" {
+  +int* lockerId
+  +int* compartmentId
+  +String* startTime
+  +String* endTime
+  +String* externalId
+  +String* parcelNumber
+  +Map<String*, dynamic>* toJson()
+}
+
+class "myflexbox::repos::google_places_repo.dart::GooglePlacesRepo" {
+  +Client* client
+  {static} +String* androidKey
+  {static} +String* iosKey
+  +String* apiKey
+  +Future<List<Suggestion*>*>* fetchSuggestions()
+  +Future<MapsLocationData*>* getPlaceDetailFromId()
+}
+
+"myflexbox::repos::google_places_repo.dart::GooglePlacesRepo" o-- "http::src::client.dart::Client"
+
+class "myflexbox::repos::get_locker_booking_repo.dart::GetLockerBooking" {
+  +FirebaseDatabase* database
+  +DatabaseReference* shareDB
+  +DatabaseReference* userDB
+  +String* apiKey
+  +String* baseUrl
+  +Future<List<Booking*>*>* getBookings()
+  +Future<void>* transformSharedBookings()
+  +Future<List<Booking*>*>* getSharedBookingsFrom()
+  +Future<Booking*>* getBooking()
+  +Future<DBUser*>* getUser()
+  +Future<DBUser*>* getUserWithNumber()
+  +Future<bool*>* deleteBooking()
+  +Future<MemoryImage*>* getQR()
+  +Future<Locker*>* getLocker()
+  +Future<void>* shareBooking()
+  +Future<void>* deleteShare()
+  +Future<String*>* checkIfFlexBoxUser()
+}
+
+"myflexbox::repos::get_locker_booking_repo.dart::GetLockerBooking" o-- "firebase_database::firebase_database.dart::FirebaseDatabase"
+"myflexbox::repos::get_locker_booking_repo.dart::GetLockerBooking" o-- "firebase_database::firebase_database.dart::DatabaseReference"
+
+class "myflexbox::repos::rent_locker_repository.dart::RentLockerRepository" {
+  +String* apiKey
+  +String* baseUrl
+  +Future<List<Locker*>*>* getLockers()
+  +Future<List<Locker*>*>* getFilteredLockers()
+  +Future<Booking*>* bookLocker()
+}
+
+class "myflexbox::repos::notification_repo.dart::NotificationRepo" {
+  +FirebaseDatabase* database
+  +DatabaseReference* userDb
+  +Future<void>* notifyLockerShared()
+}
+
+"myflexbox::repos::notification_repo.dart::NotificationRepo" o-- "firebase_database::firebase_database.dart::FirebaseDatabase"
+"myflexbox::repos::notification_repo.dart::NotificationRepo" o-- "firebase_database::firebase_database.dart::DatabaseReference"
+
+class "myflexbox::cubits::current_locker::current_locker_state.dart::FilterStates" {
+  +int* index
+  {static} +List<FilterStates*>* values
+  {static} +FilterStates* BOOKING_CREATED
+  {static} +FilterStates* COLLECTED
+  {static} +FilterStates* NOT_COLLECTED
+  {static} +FilterStates* CANCELLED
+}
+
+"myflexbox::cubits::current_locker::current_locker_state.dart::FilterStates" o-- "myflexbox::cubits::current_locker::current_locker_state.dart::FilterStates"
+
+abstract class "myflexbox::cubits::current_locker::current_locker_state.dart::CurrentLockerState" {
+  +Map<FilterStates*, bool*>* filter
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::current_locker::current_locker_state.dart::CurrentLockerLoading" {
+}
+
+class "myflexbox::cubits::current_locker::current_locker_state.dart::CurrentLockerList" {
+  +List<Booking*>* bookingList
+  +List<Booking*>* bookingListFiltered
+  +String* filterTxt
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::current_locker::current_locker_state.dart::CurrentLockerEmpty" {
+}
+
+class "myflexbox::cubits::current_locker::current_locker_cubit.dart::CurrentLockerCubit" {
+  +GetLockerBooking* repo
+  +String* myUserId
+  +String* filterTxt
+  +dynamic filterState
+  +Future<void>* loadData()
+  +Future<void>* loadDataBackground()
+  +Future<void>* changeFilter()
+  +Future<void>* changeTextFilter()
+  +List<Booking*>* filterData()
+  +bool* filterTextSearch()
+  +String* convertDate()
+}
+
+"myflexbox::cubits::current_locker::current_locker_cubit.dart::CurrentLockerCubit" o-- "myflexbox::repos::get_locker_booking_repo.dart::GetLockerBooking"
+
+abstract class "myflexbox::cubits::bottom_nav::bottom_nav_state.dart::BottomNavState" {
+  +int* pageIndex
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::bottom_nav::bottom_nav_state.dart::CurrentLockersNavState" {
+  +int* pageIndex
+}
+
+class "myflexbox::cubits::bottom_nav::bottom_nav_state.dart::AddLockerNavState" {
+  +int* pageIndex
+}
+
+class "myflexbox::cubits::bottom_nav::bottom_nav_state.dart::NotificationNavState" {
+  +int* pageIndex
+}
+
+class "myflexbox::cubits::bottom_nav::bottom_nav_state.dart::ProfileNavState" {
+  +int* pageIndex
+}
+
+class "myflexbox::cubits::bottom_nav::bottom_nav_cubit.dart::BottomNavCubit" {
+  +void changePage()
+}
+
+class "myflexbox::cubits::auth::auth_cubit.dart::AuthCubit" {
+  +UserRepository* userRepository
+  +Future<void>* authenticate()
+  +Future<List<dynamic>*>* loginWithEmail()
+  +Future<List<dynamic>*>* registerWithEmail()
+  +Future<void>* signInWithGoogle()
+  +Future<void>* logout()
+}
+
+"myflexbox::cubits::auth::auth_cubit.dart::AuthCubit" o-- "myflexbox::repos::user_repo.dart::UserRepository"
+
+abstract class "myflexbox::cubits::auth::auth_state.dart::AuthState" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::auth::auth_state.dart::AuthUninitialized" {
+}
+
+class "myflexbox::cubits::auth::auth_state.dart::AuthAuthenticated" {
+  +DBUser* user
+}
+
+"myflexbox::cubits::auth::auth_state.dart::AuthAuthenticated" o-- "myflexbox::repos::models::user.dart::DBUser"
+
+class "myflexbox::cubits::auth::auth_state.dart::AuthUnauthenticated" {
+}
+
+class "myflexbox::cubits::auth::auth_state.dart::AuthLoading" {
+}
+
+abstract class "myflexbox::cubits::register::register_state.dart::RegisterState" {
+  +Email* email
+  +Password* password
+  +Username* username
+  +Telephone* telephone
+  +List<Object*>* props
+}
+
+"myflexbox::cubits::register::register_state.dart::RegisterState" o-- "myflexbox::repos::models::form_data.dart::Email"
+"myflexbox::cubits::register::register_state.dart::RegisterState" o-- "myflexbox::repos::models::form_data.dart::Password"
+"myflexbox::cubits::register::register_state.dart::RegisterState" o-- "myflexbox::repos::models::form_data.dart::Username"
+"myflexbox::cubits::register::register_state.dart::RegisterState" o-- "myflexbox::repos::models::form_data.dart::Telephone"
+
+class "myflexbox::cubits::register::register_state.dart::RegisterInitial" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::register::register_state.dart::RegisterLoadingState" {
+}
+
+class "myflexbox::cubits::register::register_state.dart::RegisterFailure" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::register::register_state.dart::RegisterSuccess" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::register::register_cubit.dart::RegisterCubit" {
+  +AuthCubit* authCubit
+  +Future<void>* register()
+  +void changedEmail()
+  +void changedPassword()
+  +void changedUsername()
+  +void changedPhoneNumber()
+  +void invalidInput()
+}
+
+"myflexbox::cubits::register::register_cubit.dart::RegisterCubit" o-- "myflexbox::cubits::auth::auth_cubit.dart::AuthCubit"
+
+class "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit" {
+  +GetLockerBooking* currentLockersRepository
+  +UserRepository* userRepository
+  +NotificationRepo* notificationRepo
+  +CurrentLockerCubit* currentLockerCubit
+  +void showQR()
+  +void showShare()
+  +void filterShare()
+  +void getPosition()
+  +void showDefault()
+  +void shareFlexBox()
+  +void shareViaWhatsapp()
+  +void shareViaSMS()
+  +Future<void>* deleteShare()
+  +Future<void>* openGoogleMaps()
+}
+
+"myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit" o-- "myflexbox::repos::get_locker_booking_repo.dart::GetLockerBooking"
+"myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit" o-- "myflexbox::repos::user_repo.dart::UserRepository"
+"myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit" o-- "myflexbox::repos::notification_repo.dart::NotificationRepo"
+"myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit" o-- "myflexbox::cubits::current_locker::current_locker_cubit.dart::CurrentLockerCubit"
+
+abstract class "myflexbox::cubits::locker_detail::locker_detail_state.dart::LockerDetailState" {
+  +Booking* booking
+  +Locker* locker
+  +List<Object*>* props
+}
+
+"myflexbox::cubits::locker_detail::locker_detail_state.dart::LockerDetailState" o-- "myflexbox::repos::models::booking.dart::Booking"
+"myflexbox::cubits::locker_detail::locker_detail_state.dart::LockerDetailState" o-- "myflexbox::repos::models::locker.dart::Locker"
+
+class "myflexbox::cubits::locker_detail::locker_detail_state.dart::LockerDetailStateDefault" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::locker_detail::locker_detail_state.dart::LockerDetailStateShare" {
+  +List<DBUser*>* contacts
+  +List<DBUser*>* contactsFiltered
+  +List<DBUser*>* favorites
+  +List<DBUser*>* favoritesFiltered
+  +String* filter
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::locker_detail::locker_detail_state.dart::LockerDetailStateQR" {
+  +MemoryImage* qr
+  +List<Object*>* props
+}
+
+"myflexbox::cubits::locker_detail::locker_detail_state.dart::LockerDetailStateQR" o-- "flutter::src::painting::image_provider.dart::MemoryImage"
+
+class "myflexbox::cubits::locker_detail::locker_detail_state.dart::LockerDetailStateLoading" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::rent_locker::rent_locker_state.dart::BoxSize" {
+  +int* index
+  {static} +List<BoxSize*>* values
+  {static} +BoxSize* m
+  {static} +BoxSize* s
+  {static} +BoxSize* l
+}
+
+"myflexbox::cubits::rent_locker::rent_locker_state.dart::BoxSize" o-- "myflexbox::cubits::rent_locker::rent_locker_state.dart::BoxSize"
+
+abstract class "myflexbox::cubits::rent_locker::rent_locker_state.dart::RentLockerState" {
+  +BoxSize* boxSize
+  +DateTime* startDate
+  +DateTime* endDate
+  +MapsLocationData* chosenLocation
+  +MapsLocationData* myLocation
+  +List<Locker*>* lockerList
+  +List<Object*>* props
+}
+
+"myflexbox::cubits::rent_locker::rent_locker_state.dart::RentLockerState" o-- "myflexbox::cubits::rent_locker::rent_locker_state.dart::BoxSize"
+"myflexbox::cubits::rent_locker::rent_locker_state.dart::RentLockerState" o-- "myflexbox::repos::models::google_places_data.dart::MapsLocationData"
+
+class "myflexbox::cubits::rent_locker::rent_locker_state.dart::FilterRentLockerState" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::rent_locker::rent_locker_state.dart::FilterRentLockerLoadingState" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::rent_locker::rent_locker_state.dart::MapRentLockerState" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::rent_locker::rent_locker_state.dart::MapRentLockerLoadingState" {
+  +List<Object*>* props
+}
+
+class "myflexbox::cubits::rent_locker::rent_locker_state.dart::SubmitRentLockerState" {
+}
+
+class "myflexbox::cubits::rent_locker::rent_locker_cubit.dart::RentLockerCubit" {
+  -RentLockerRepository* _rentLockerRepository
+  +GoogleMapController* mapsController
+  +Future<void>* switchScreen()
+  +void changeBoxSize()
+  +void changeDate()
+  +void changeLocation()
+  +Future<void>* getCurrentLocation()
+  +Future<void>* fetchResults()
+  +void showLockerOnMap()
+  +Future<void>* updateCameraLocation()
+  +Future<void>* checkCameraLocation()
+}
+
+"myflexbox::cubits::rent_locker::rent_locker_cubit.dart::RentLockerCubit" o-- "myflexbox::repos::rent_locker_repository.dart::RentLockerRepository"
+"myflexbox::cubits::rent_locker::rent_locker_cubit.dart::RentLockerCubit" o-- "google_maps_flutter::google_maps_flutter.dart::GoogleMapController"
+
+class "myflexbox::cubits::login::login_cubit.dart::LoginCubit" {
+  +UserRepository* userRepository
+  +AuthCubit* authCubit
+  +Future<void>* login()
+  +void changedEmail()
+  +void changedPassword()
+  +void invalidInput()
+}
+
+"myflexbox::cubits::login::login_cubit.dart::LoginCubit" o-- "myflexbox::repos::user_repo.dart::UserRepository"
+"myflexbox::cubits::login::login_cubit.dart::LoginCubit" o-- "myflexbox::cubits::auth::auth_cubit.dart::AuthCubit"
+
+abstract class "myflexbox::cubits::login::login_state.dart::LoginState" {
+  +Email* email
+  +Password* password
+  +List<Object*>* props
+}
+
+"myflexbox::cubits::login::login_state.dart::LoginState" o-- "myflexbox::repos::models::form_data.dart::Email"
+"myflexbox::cubits::login::login_state.dart::LoginState" o-- "myflexbox::repos::models::form_data.dart::Password"
+
+class "myflexbox::cubits::login::login_state.dart::LoginInitial" {
+  +Email* email
+  +Password* password
+  +List<Object*>* props
+}
+
+"myflexbox::cubits::login::login_state.dart::LoginInitial" o-- "myflexbox::repos::models::form_data.dart::Email"
+"myflexbox::cubits::login::login_state.dart::LoginInitial" o-- "myflexbox::repos::models::form_data.dart::Password"
+
+class "myflexbox::cubits::login::login_state.dart::LoadingLoginState" {
+  +Email* email
+  +Password* password
+}
+
+"myflexbox::cubits::login::login_state.dart::LoadingLoginState" o-- "myflexbox::repos::models::form_data.dart::Email"
+"myflexbox::cubits::login::login_state.dart::LoadingLoginState" o-- "myflexbox::repos::models::form_data.dart::Password"
+
+class "myflexbox::cubits::login::login_state.dart::LoginFailure" {
+  +Email* email
+  +Password* password
+  +List<Object*>* props
+}
+
+"myflexbox::cubits::login::login_state.dart::LoginFailure" o-- "myflexbox::repos::models::form_data.dart::Email"
+"myflexbox::cubits::login::login_state.dart::LoginFailure" o-- "myflexbox::repos::models::form_data.dart::Password"
+
+class "myflexbox::config::size_config.dart::SizeConfig" {
+  {static} -MediaQueryData* _mediaQueryData
+  {static} +double* screenWidth
+  {static} +double* screenHeight
+  {static} +double* defaultSize
+  {static} +Orientation* orientation
+  +void init()
+}
+
+"myflexbox::config::size_config.dart::SizeConfig" o-- "flutter::src::widgets::media_query.dart::MediaQueryData"
+"myflexbox::config::size_config.dart::SizeConfig" o-- "flutter::src::widgets::media_query.dart::Orientation"
+
+class "myflexbox::config::debounce.dart::Debouncer" {
+  +int* milliseconds
+  +void Function()* action
+  -Timer* _timer
+  +dynamic run()
+}
+
+"myflexbox::config::debounce.dart::Debouncer" o-- "dart::ui::void Function()"
+"myflexbox::config::debounce.dart::Debouncer" o-- "dart::async::Timer"
+
+class "myflexbox::config::app_router.dart::AppRouter" {
+  {static} +String* StartViewRoute
+  {static} +String* LoginViewRoute
+  {static} +String* HomeViewRoute
+  {static} +String* RegisterViewRoute
+  {static} +String* OnBoardingRoute
+  {static} +String* ContactViewRoute
+  {static} +String* ProfileViewRoute
+  {static} +String* SubmitViewRoute
+  +Route<dynamic>* generateRoute()
+}
+
+class "myflexbox::Screens::home::home_screen.dart::HomeScreen" {
+  +_HomeScreenState* createState()
+}
+
+class "myflexbox::Screens::home::home_screen.dart::_HomeScreenState" {
+  -PageController* _pageController
+  +bool* stoppedAnimating
+  +List<Widget*>* pages
+  +Widget* build()
+}
+
+"myflexbox::Screens::home::home_screen.dart::_HomeScreenState" o-- "flutter::src::widgets::page_view.dart::PageController"
+
+class "myflexbox::Screens::home::widgets::app_bar.dart::CustomAppBar" {
+  +Size* preferredSize
+  +Widget* build()
+}
+
+"myflexbox::Screens::home::widgets::app_bar.dart::CustomAppBar" o-- "dart::ui::Size"
+"flutter::src::widgets::preferred_size.dart::PreferredSizeWidget" <|-- "myflexbox::Screens::home::widgets::app_bar.dart::CustomAppBar"
+
+class "myflexbox::Screens::home::widgets::app_bar.dart::DefaultAppBar" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::home::widgets::app_bar.dart::ProfileAppBar" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::home::widgets::app_bar.dart::RentLockerAppBar" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::home::widgets::app_bar.dart::HistoryAppBar" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::home::widgets::bottom_navigation_bar.dart::BottomGoogleNavigationBar" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::submit::submit_page.dart::SubmitPage" {
+  +BoxSize* lockerSize
+  +DateTime* startDate
+  +DateTime* endDate
+  +Locker* locker
+  +_SubmitPageState* createState()
+}
+
+"myflexbox::Screens::submit::submit_page.dart::SubmitPage" o-- "myflexbox::cubits::rent_locker::rent_locker_state.dart::BoxSize"
+"myflexbox::Screens::submit::submit_page.dart::SubmitPage" o-- "myflexbox::repos::models::locker.dart::Locker"
+
+class "myflexbox::Screens::submit::submit_page.dart::_SubmitPageState" {
+  +bool* isLoading
+  +String* noteText
+  +String* parseDate()
+  +String* formattingDate()
+  +String* formatBoxSize()
+  +void toggleLoading()
+  +Widget* build()
+}
+
+class "myflexbox::Screens::notification::notification_page.dart::NotificationPage" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::notification::notification_screen.dart::CustomData" {
+  +FirebaseApp* app
+  +_CustomDataState* createState()
+}
+
+"myflexbox::Screens::notification::notification_screen.dart::CustomData" o-- "firebase_core::firebase_core.dart::FirebaseApp"
+
+class "myflexbox::Screens::notification::notification_screen.dart::_CustomDataState" {
+  +TextEditingController* editTextController
+  +TextEditingController* searchTextController
+  +DatabaseReference* userDb
+  +dynamic query
+  +String* uid
+  -dynamic _key
+  +List<Messages*>* messageList
+  +void initState()
+  +Widget* build()
+  +Widget* firebaseList()
+  +dynamic filterList()
+}
+
+"myflexbox::Screens::notification::notification_screen.dart::_CustomDataState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"myflexbox::Screens::notification::notification_screen.dart::_CustomDataState" o-- "firebase_database::firebase_database.dart::DatabaseReference"
+
+class "myflexbox::Screens::notification::notification_screen.dart::Person" {
+  +String* email
+  +String* name
+  +String* token
+  +String* uid
+  +Map<String*, dynamic>* toJson()
+}
+
+class "myflexbox::Screens::start::start_screen.dart::StartPage" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::start::widgets::loading_view.dart::LoadingView" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::start::widgets::splash_view.dart::SplashView" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::register::register_screen.dart::RegisterPage" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::register::widgets::register_form.dart::RegisterForm" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::register::widgets::register_form.dart::UsernameFormField" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::register::widgets::register_form.dart::EmailFormField" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::register::widgets::register_form.dart::TelephoneFormField" {
+  +_TelephoneFormFieldState* createState()
+}
+
+class "myflexbox::Screens::register::widgets::register_form.dart::_TelephoneFormFieldState" {
+  +TextEditingController* textEditingController
+  +void initState()
+  +void dispose()
+  +Widget* build()
+}
+
+"myflexbox::Screens::register::widgets::register_form.dart::_TelephoneFormFieldState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+
+class "myflexbox::Screens::register::widgets::register_form.dart::PasswordFormField" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::register::widgets::register_form.dart::LoginButton" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::register::widgets::register_form.dart::RegisterButton" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::register::widgets::register_success_view.dart::RegisterSuccessView" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::current_lockers::current_locker_page.dart::CurrentLockersPage" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::current_lockers::current_locker_page.dart::HistoryList" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::current_lockers::current_locker_page.dart::HistoryTile" {
+  +Booking* booking
+  +Widget* build()
+  +String* getQRCodeText()
+}
+
+"myflexbox::Screens::current_lockers::current_locker_page.dart::HistoryTile" o-- "myflexbox::repos::models::booking.dart::Booking"
+
+class "myflexbox::Screens::current_lockers::widgets::BottomCard.dart::BottomCard" {
+  +Booking* booking
+  +Widget* build()
+  +String* getSharedName()
+  +String* getCreator()
+}
+
+"myflexbox::Screens::current_lockers::widgets::BottomCard.dart::BottomCard" o-- "myflexbox::repos::models::booking.dart::Booking"
+
+class "myflexbox::Screens::current_lockers::widgets::current_locker_empty.dart::EmptyScreen" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::current_lockers::widgets::current_locker_filter.dart::HistoryFilter" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::current_lockers::widgets::current_locker_filter.dart::BoxPickerSquare" {
+  +double* width
+  +String* filterType
+  +double* height
+  +String* assetPath
+  +FilterStates* filterState
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_lockers::widgets::current_locker_filter.dart::BoxPickerSquare" o-- "myflexbox::cubits::current_locker::current_locker_state.dart::FilterStates"
+
+class "myflexbox::Screens::current_lockers::widgets::TopCard.dart::TopCard" {
+  +Booking* booking
+  +Widget* build()
+  +String* getStateText()
+  +String* getImagePath()
+  +String* convertDate()
+}
+
+"myflexbox::Screens::current_lockers::widgets::TopCard.dart::TopCard" o-- "myflexbox::repos::models::booking.dart::Booking"
+
+class "myflexbox::Screens::profile::widgets::contact_screen.dart::ContactScreen" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::profile::widgets::contact_screen.dart::Contacts" {
+  +_ContactsState* createState()
+}
+
+class "myflexbox::Screens::profile::widgets::contact_screen.dart::_ContactsState" {
+  +List<DBUser*>* contacts
+  +List<DBUser*>* contactsFiltered
+  +TextEditingController* searchController
+  -List<DBUser*>* _savedContacts
+  +String* mNumber
+  +void initState()
+  +dynamic getAllContacts()
+  +dynamic filterContacts()
+  +String* flattenPhoneNumer()
+  -void _sendSMS()
+  +Future<bool*>* searchContact()
+  +void addNotificationUser()
+  +Future<bool*>* removeDBContact()
+  +Future<List<DBUser*>*>* getDBContact()
+  +Future<DBUser*>* getUserFromDB()
+  +Widget* build()
+  +dynamic popUpDialog()
+}
+
+"myflexbox::Screens::profile::widgets::contact_screen.dart::_ContactsState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+
+class "myflexbox::Screens::profile::widgets::body.dart::ProfileBody" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::profile::widgets::profile_menu.dart::ProfileMenu" {
+  +String* text
+  +String* icon
+  +void Function()* press
+  +Widget* build()
+}
+
+"myflexbox::Screens::profile::widgets::profile_menu.dart::ProfileMenu" o-- "dart::ui::void Function()"
+
+class "myflexbox::Screens::profile::profile_page.dart::ProfilePage" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::rent_locker_page.dart::RentLockerPage" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_map_view.dart::RentLockerMapView" {
+  +_RentLockerMapViewState* createState()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_map_view.dart::_RentLockerMapViewState" {
+  +HashSet<Marker*>* markers
+  +HashSet<Circle*>* circles
+  +BitmapDescriptor* flexboxMarker
+  +BitmapDescriptor* myLocationMarker
+  +void initState()
+  +void getMarker()
+  +Widget* build()
+}
+
+"myflexbox::Screens::rent_locker::widgets::rent_locker_map_view.dart::_RentLockerMapViewState" o-- "dart::collection::HashSet<Marker>"
+"myflexbox::Screens::rent_locker::widgets::rent_locker_map_view.dart::_RentLockerMapViewState" o-- "dart::collection::HashSet<Circle>"
+"myflexbox::Screens::rent_locker::widgets::rent_locker_map_view.dart::_RentLockerMapViewState" o-- "google_maps_flutter_platform_interface::src::types::bitmap.dart::BitmapDescriptor"
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_map_view.dart::LockerLocationModal" {
+  +Locker* locker
+  +RentLockerState* state
+  +Widget* build()
+}
+
+"myflexbox::Screens::rent_locker::widgets::rent_locker_map_view.dart::LockerLocationModal" o-- "myflexbox::repos::models::locker.dart::Locker"
+"myflexbox::Screens::rent_locker::widgets::rent_locker_map_view.dart::LockerLocationModal" o-- "myflexbox::cubits::rent_locker::rent_locker_state.dart::RentLockerState"
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_map_view.dart::MapLoadingIndicator" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_list_view.dart::RentLockerListView" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_list_view.dart::RentLockerList" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_list_view.dart::LockerTile" {
+  +Locker* locker
+  +Widget* build()
+}
+
+"myflexbox::Screens::rent_locker::widgets::rent_locker_list_view.dart::LockerTile" o-- "myflexbox::repos::models::locker.dart::Locker"
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_list_view.dart::RentLockerListLoadingIndicator" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_filter_form.dart::FilterForm" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_filter_form.dart::LockerSearchBar" {
+  +void showLocationSearch()
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_filter_form.dart::LockerTimeBar" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_filter_form.dart::DatePickerModal" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_filter_form.dart::BoxPickerModal" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::rent_locker::widgets::rent_locker_filter_form.dart::BoxPickerSquare" {
+  +double* width
+  +String* category
+  +String* size
+  +String* price
+  +BoxSize* boxSize
+  +Widget* build()
+}
+
+"myflexbox::Screens::rent_locker::widgets::rent_locker_filter_form.dart::BoxPickerSquare" o-- "myflexbox::cubits::rent_locker::rent_locker_state.dart::BoxSize"
+
+class "myflexbox::Screens::rent_locker::widgets::location_search.dart::AddressSearch" {
+  +GooglePlacesRepo* apiClient
+  +List<Widget*>* buildActions()
+  +Widget* buildLeading()
+  +Widget* buildResults()
+  +Widget* buildSuggestions()
+}
+
+"myflexbox::Screens::rent_locker::widgets::location_search.dart::AddressSearch" o-- "myflexbox::repos::google_places_repo.dart::GooglePlacesRepo"
+
+class "myflexbox::Screens::login::login_screen.dart::LoginScreen" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::login::widgets::login_form.dart::LoginForm" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::login::widgets::login_form.dart::EmailFormField" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::login::widgets::login_form.dart::PasswordFormField" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::login::widgets::login_form.dart::LoginButton" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::login::widgets::login_form.dart::RegisterButton" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::login::widgets::login_form.dart::GoogleLoginButton" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::onboarding::onboarding_screen.dart::OnboardingScreen" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::onboarding::widgets::body.dart::OnBoardingBody" {
+  +_OnBoardingBodyState* createState()
+}
+
+class "myflexbox::Screens::onboarding::widgets::body.dart::_OnBoardingBodyState" {
+  +int* currentPage
+  +List<Map<String*, String*>*>* splashData
+  +Widget* build()
+  +AnimatedContainer* buildDot()
+}
+
+class "myflexbox::Screens::onboarding::widgets::splash_content.dart::SplashContent" {
+  +String* text
+  +String* image
+  +Widget* build()
+}
+
+class "myflexbox::Screens::current_locker_detail::current_locker_detail.dart::CurrentLockerDetailScreen" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::current_locker_detail::current_locker_detail.dart::LockerDetailLoadingView" {
+  +Widget* build()
+}
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::CurrentLockerDefaultView" {
+  +Booking* booking
+  +LockerDetailCubit* cubit
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::CurrentLockerDefaultView" o-- "myflexbox::repos::models::booking.dart::Booking"
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::CurrentLockerDefaultView" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::SharedByFrom" {
+  +Booking* booking
+  +LockerDetailCubit* cubit
+  +List<String*>* favoriteIds
+  +Widget* build()
+  +Widget* labelText()
+  +Widget* fromByText()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::SharedByFrom" o-- "myflexbox::repos::models::booking.dart::Booking"
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::SharedByFrom" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::DescriptionView" {
+  +Booking* booking
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::DescriptionView" o-- "myflexbox::repos::models::booking.dart::Booking"
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::QRButton" {
+  +LockerDetailCubit* cubit
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::QRButton" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::DateRangeView" {
+  +Booking* booking
+  +Widget* build()
+  +String* convertDate()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::DateRangeView" o-- "myflexbox::repos::models::booking.dart::Booking"
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::BoxSizeView" {
+  +Booking* booking
+  +Widget* build()
+  +String* getBoxSize()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::BoxSizeView" o-- "myflexbox::repos::models::booking.dart::Booking"
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::MapViewText" {
+  +Widget* build()
+  +String* getAddress()
+}
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::MapView" {
+  +_MapViewState* createState()
+}
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::_MapViewState" {
+  +BitmapDescriptor* flexboxMarker
+  +void initState()
+  +Widget* build()
+  +HashSet<Marker*>* getMarkers()
+  +void getMarker()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::_MapViewState" o-- "google_maps_flutter_platform_interface::src::types::bitmap.dart::BitmapDescriptor"
+
+class "myflexbox::Screens::current_locker_detail::widgets::default_view.dart::DefaultViewMenuBar" {
+  +Booking* booking
+  +LockerDetailCubit* cubit
+  +List<String*>* favoriteIds
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::DefaultViewMenuBar" o-- "myflexbox::repos::models::booking.dart::Booking"
+"myflexbox::Screens::current_locker_detail::widgets::default_view.dart::DefaultViewMenuBar" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::CurrentLockerQRView" {
+  +Booking* booking
+  +LockerDetailCubit* cubit
+  +MemoryImage* qr
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::CurrentLockerQRView" o-- "myflexbox::repos::models::booking.dart::Booking"
+"myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::CurrentLockerQRView" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+"myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::CurrentLockerQRView" o-- "flutter::src::painting::image_provider.dart::MemoryImage"
+
+class "myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::QrViewImage" {
+  +MemoryImage* qr
+  +Booking* booking
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::QrViewImage" o-- "flutter::src::painting::image_provider.dart::MemoryImage"
+"myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::QrViewImage" o-- "myflexbox::repos::models::booking.dart::Booking"
+
+class "myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::QrViewMenuBar" {
+  +Booking* booking
+  +LockerDetailCubit* cubit
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::QrViewMenuBar" o-- "myflexbox::repos::models::booking.dart::Booking"
+"myflexbox::Screens::current_locker_detail::widgets::qr_view.dart::QrViewMenuBar" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::CurrentLockerShareView" {
+  +Booking* booking
+  +LockerDetailCubit* cubit
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::CurrentLockerShareView" o-- "myflexbox::repos::models::booking.dart::Booking"
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::CurrentLockerShareView" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewMenuBar" {
+  +LockerDetailCubit* cubit
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewMenuBar" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewSearchField" {
+  +LockerDetailCubit* cubit
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewSearchField" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewBody" {
+  +Booking* booking
+  +LockerDetailCubit* cubit
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewBody" o-- "myflexbox::repos::models::booking.dart::Booking"
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewBody" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewUserList" {
+  +List<DBUser*>* contactList
+  +int* contactListLength
+  +List<DBUser*>* favoritesList
+  +int* favoritesListLength
+  +LockerDetailCubit* cubit
+  +Widget* build()
+  +Widget* getSeparator()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewUserList" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ListItem" {
+  +DBUser* user
+  +LockerDetailCubit* lockerDetailCubit
+  +Widget* build()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ListItem" o-- "myflexbox::repos::models::user.dart::DBUser"
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ListItem" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewNumberNotFound" {
+  +LockerDetailStateShare* detailState
+  +LockerDetailCubit* cubit
+  +Widget* build()
+  +bool* checkIfNumberValid()
+}
+
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewNumberNotFound" o-- "myflexbox::cubits::locker_detail::locker_detail_state.dart::LockerDetailStateShare"
+"myflexbox::Screens::current_locker_detail::widgets::shareLocker_view.dart::ShareViewNumberNotFound" o-- "myflexbox::cubits::locker_detail::locker_detail_cubit.dart::LockerDetailCubit"
+
+class "myflexbox::main.dart::MyApp" {
+  -AppRouter* _appRouter
+  +Widget* build()
+}
+
+"myflexbox::main.dart::MyApp" o-- "myflexbox::config::app_router.dart::AppRouter"
+
+class "myflexbox::components::default_button.dart::DefaultButton" {
+  +String* text
+  +Function* press
+  +Widget* build()
+}
+
+
+@enduml
